@@ -31,6 +31,7 @@ class _SimpleInterestFormState extends State<SimpleInterestForm> {
   var _selectedCurrency = '';
   var _displaySimpleInterestResult = '';
   final double _minimumPadding = 10.0;
+  var _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -44,15 +45,22 @@ class _SimpleInterestFormState extends State<SimpleInterestForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.all(20.0),
-      child: ListView(
+    return Form(
+      key: _formKey,
+      child: Padding(
+        padding: EdgeInsets.all(20.0),
+        child: ListView(
         children: <Widget>[
           Padding(
             padding: EdgeInsets.only(top: _minimumPadding, bottom: _minimumPadding),
-            child: TextField(
+            child: TextFormField(
               controller: principalController,
               keyboardType: TextInputType.number,
+              validator: (value) {
+                if (value.isEmpty) {
+                  return "Please enter the principal amount";
+                }
+              },
               decoration: InputDecoration(
                 labelText: 'Principal',
                 hintText: 'Enter the principal value',
@@ -64,9 +72,14 @@ class _SimpleInterestFormState extends State<SimpleInterestForm> {
           ),
           Padding(
             padding: EdgeInsets.only(top: _minimumPadding, bottom: _minimumPadding),
-            child: TextField(
+            child: TextFormField(
               controller: rateController,
               keyboardType: TextInputType.number,
+              validator: (value) {
+                if (value.isEmpty) {
+                  return "Please enter the rate in %";
+                }
+              },
               decoration: InputDecoration(
                 labelText: 'Rate of the interest',
                 hintText: 'In percentage (%)',
@@ -79,9 +92,14 @@ class _SimpleInterestFormState extends State<SimpleInterestForm> {
           Row(
             children: <Widget>[
               Expanded(
-                child: TextField(
+                child: TextFormField(
                   controller: timeController,
                   keyboardType: TextInputType.number,
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return "Please enter the time in years";
+                    }
+                  },
                   decoration: InputDecoration(
                     labelText: 'Time',
                     hintText: 'Time in years',
@@ -118,7 +136,9 @@ class _SimpleInterestFormState extends State<SimpleInterestForm> {
                     child: Text("Calculate"),
                     onPressed: () {
                       setState(() {
-                      _displaySimpleInterestResult = _calculatePressedAndReturnResult();
+                        if (_formKey.currentState.validate()) {
+                          _displaySimpleInterestResult = _calculatePressedAndReturnResult();
+                        }
                       });
                     },
                   ),
@@ -141,6 +161,7 @@ class _SimpleInterestFormState extends State<SimpleInterestForm> {
             child: Text(_displaySimpleInterestResult),
           )
         ],
+      )
       ),
     );
   }
